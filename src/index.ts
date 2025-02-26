@@ -1,20 +1,15 @@
 // Interfaces
-interface Worker {
-  id: string;
-  loop: number;
-}
-
 interface WorkerOptions {
   interval?: number;
 }
 
 /**
- * Creates a worker group.
- * @param id The ID for the worker group.
+ * Creates a job.
+ * @param id The ID or name for the job (used to describe the job).
  */
-export default class WorkerGroup {
+export default class Job {
   // Internal variables.
-  private id: string;
+  public id: string;
   private workers: Worker[] = [];
 
   constructor(id: string) {
@@ -22,49 +17,88 @@ export default class WorkerGroup {
   }
 
   /**
-   * Adds a worker to the worker group.
+   * Adds a worker to the job.
    * @param id The ID you want to have for the worker.
    * @param options The options for the worker.
    */
-  public add(id: string, fn: () => void, options?: WorkerOptions): void {
+  public add(id: string, fn: () => void, options?: WorkerOptions): Worker {
     const exists = this.workers.find((worker) => worker.id === id);
 
     if (exists)
       throw new Error("A worker with the provided ID already exists.");
 
-    const loop = setInterval(fn, options ? options.interval : 1000);
+    const worker = new Worker(
+      id,
+      options && options.interval ? options.interval : 1000,
+      fn
+    );
 
-    this.workers.push({
-      id: id,
-      loop: loop,
-    });
+    this.workers.push(worker);
+
+    return worker;
   }
 
   /**
-   * Removes a worker from the worker group.
+   * Removes a worker from the job.
    * @param id The ID to use to find the worker.
    */
   public remove(id: string): void {
-    const found = this.workers.find((worker) => worker.id === id);
+    const index = this.workers.findIndex((worker) => worker.id === id);
 
-    if (!found) throw new Error("Could not find worker with given ID.");
+    if (index < 0) throw new Error("Could not find worker with given ID.");
 
-    clearInterval(found.loop);
+    this.workers[index].stop();
+    this.workers.splice(index, 1);
   }
 
   /**
-   * Lists all workers from the worker group.
+   * Lists all workers on the job.
    */
   public list(): Worker[] {
     return this.workers;
   }
 
   /**
-   * Find a specific worker from the worker group.
+   * Find a specific worker from the job.
    * @param id The ID to use to find the worker.
    * @return {Worker} The worker that was found.
    */
   public find(id: string): Worker | undefined {
     return this.workers.find((worker) => worker.id === id);
+  }
+}
+
+/**
+ * A worker that is assigned to a job.
+ * @param id The ID or name for the worker (used to describe the action).
+ * @param interval The amount of time in between working points.
+ * @param fn The action to run.
+ */
+class Worker {
+  // Internal variables
+  public id: string;
+  private interval: number;
+  private fn: () => void;
+
+  private loop: number;
+
+  constructor(id: string, interval: number, fn: () => void) {
+    this.id = id;
+    this.interval = interval;
+    this.fn = fn;
+  }
+
+  /**
+   * Starts the worker.
+   */
+  public start() {
+    this.loop = setInterval(this.fn, this.interval);
+  }
+
+  /**
+   * Stops the worker.
+   */
+  public stop() {
+    clearInterval(this.loop);
   }
 }
