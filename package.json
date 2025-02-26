@@ -1,6 +1,6 @@
 {
   "name": "my-workers",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple module for handling workers.",
   "license": "ISC",
   "author": "Lucas Stranks",
