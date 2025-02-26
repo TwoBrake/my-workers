@@ -47,7 +47,7 @@ export default class Job {
 
     if (index < 0) throw new Error("Could not find worker with given ID.");
 
-    this.workers[index].stop();
+    this.workers[index].pause();
     this.workers.splice(index, 1);
   }
 
@@ -96,9 +96,9 @@ class Worker {
   }
 
   /**
-   * Stops the worker.
+   * Pauses the worker.
    */
-  public stop() {
+  public pause() {
     clearInterval(this.loop);
   }
 }
