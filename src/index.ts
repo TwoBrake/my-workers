@@ -1,6 +1,7 @@
 // Interfaces
 interface WorkerOptions {
   interval?: number;
+  delayStart?: boolean;
 }
 
 /**
@@ -30,7 +31,8 @@ export default class Job {
     const worker = new Worker(
       id,
       options && options.interval ? options.interval : 1000,
-      fn
+      fn,
+      options && options.delayStart ? true : false
     );
 
     this.workers.push(worker);
@@ -79,19 +81,27 @@ class Worker {
   public id: string;
   private interval: number;
   private fn: () => void;
+  private delayStart: boolean;
 
   private loop: number;
 
-  constructor(id: string, interval: number, fn: () => void) {
+  constructor(
+    id: string,
+    interval: number,
+    fn: () => void,
+    delayStart?: boolean
+  ) {
     this.id = id;
     this.interval = interval;
     this.fn = fn;
+    this.delayStart = delayStart || false;
   }
 
   /**
    * Starts the worker.
    */
   public start() {
+    if (!this.delayStart) this.fn();
     this.loop = setInterval(this.fn, this.interval);
   }
 

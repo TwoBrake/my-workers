@@ -3,8 +3,10 @@ import Job from "..";
 
 // Variables
 const endpoints = new Job("1");
+let step = 1;
 const test = endpoints.add("test", () => {
-  console.log("i am a worker!");
+  console.log(`i am a worker! step: ${step}`);
+  step++;
 });
 
 console.log(endpoints.list());
