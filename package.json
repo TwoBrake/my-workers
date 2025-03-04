@@ -1,9 +1,25 @@
 {
   "name": "my-workers",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A simple module for handling workers.",
+  "keywords": [
+    "workers",
+    "loops",
+    "intervals"
+  ],
+  "homepage": "https://github.com/TwoBrake/my-workers",
+  "bugs": {
+    "url": "https://github.com/TwoBrake/my-workers/issues"
+  },
   "license": "ISC",
-  "author": "Lucas Stranks",
+  "author": {
+    "name": "Lucas Stranks",
+    "url": "https://lucastranks.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TwoBrake/my-workers"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
